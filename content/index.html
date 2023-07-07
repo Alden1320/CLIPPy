@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación de Imágenes - CLIP VIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500&display=swap" rel="stylesheet">
+  
+    <style>
+        /* Add your CSS styling here */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: top;
+            align-items: center;
+            height: 100vh;
+            background-color: #e0e0e0;
+            font-family: 'Ubuntu', sans-serif;
+	    	   	box-sizing: border-box;
+	      		margin:0;
+	      		padding:20px;
+            text-align:center;
+        }
+        header{
+            margin:0;
+            padding:20px;
+        }
+        header img{
+            max-width:130px;
+            height:auto;
+        }
+        header p{
+            margin:0;
+            padding:5px;
+            font-variant: all-smal-caps;
+        }
+        #image-form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 8px 8px 16px #b0b0b0, -8px -8px 16px #f0f0f0;
+            text-align: center;
+        }
+        #results {
+            margin:0;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+		      	text-transform: uppercase;
+		      	text-align:center;
+        }
+        #results h1{
+            font-size:1.1em;
+        }        
+        h1{
+            text-transform: uppercase;
+            font-weight: bold;
+            color:#3b435d;
+        }
+        h2{
+            text-transform:uppercase;
+            font-weight:500;
+            font-size:1.3em;
+            color:#777;
+        }
+        .image-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .image-grid img {
+            margin: 5px;
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+            border: 2px solid rgba(0,0,0,0);
+            box-sizing: border-box;			
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .image-grid img:hover {
+            transform: scale(1.1);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .image-grid img.selected {
+	      		border: 2px solid #333;
+            transform: scale(1.1);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+			
+        }
+        .submit{
+            padding:13px;
+            border-radius:20px;
+            text-transform:uppercase;
+            border: 1px solid;
+            box-shadow: 0 5px 3px rgba(0,0,0,0.3);
+        }
+        .submit:HOVER{
+            transform: scale(1.1);
+            box-shadow: 0 7px 3px rgba(0, 0, 0, 0.2);
+        }
+        ul{
+            list-style: none;
+            padding:20px;
+        }
+        footer{
+            margin:0;
+            padding:26px;
+        }
+		</style>
+
+</head>
+
+<body>
+    <header>
+      <img src="/content/CLIPER-Logo.png"/>
+      <h1>Clasificación de Imágenes con CLIP VIT</h1>
+      <h2>Algoritmo de Contraste de Imagen-Texto Pre-Entrenado</h2>
+      <p>Introduce una imagen</p>
+      <p>Escribe uno o más términos separados por comas</p>
+      <p>Obtendrás la probabilidad de su correspondencia con la imagen</p>
+    </header>
+    <form id="image-form">
+        <input type="radio" id="url-option" name="image-option" value="url">
+        <label for="image-url">Introduce la dirección URL de una imagen:</label>
+        <input type="url" id="image-url" name="image-url" oninput="document.getElementById('url-option').checked = true;"><br><br>
+        <input type="radio" id="file-option" name="image-option" value="file">
+        <label for="image-file">O sube una imagen:</label>
+        <input type="file" id="image-file" name="image-file" accept="image/*" onchange="document.getElementById('file-option').checked = true;"><br><br>
+        <input type="radio" id="select-option" name="image-option" value="select" checked>
+        <label>O selecciona una imagen:</label>
+        <div class="image-grid">
+            <img src="https://www.elcarrocolombiano.com/wp-content/uploads/2020/09/20200922-CARROS-HIBRIDOS-EXENTOS-DE-PICO-Y-PLACA-EN-BOGOTA-01.jpg" onclick="selectImage(this)">
+            <img src="https://www.elcarrocolombiano.com/wp-content/uploads/2021/09/20210015-Proyecto-Ley-Placas-Colombia-01.jpg" onclick="selectImage(this)">
+            <img src="https://revistamoto.com/wp_rm/wp-content/uploads/2023/02/pexels-rachel-claire-4992696-1024x1536.jpg" onclick="selectImage(this)">
+            <img src="https://rodatiautos.mx/images/listings/2023-03/9e4003dd-1678358540-76.jpg" onclick="selectImage(this)">
+            <img src="https://img.los-municipios.mx/licencia-para-conducir.jpg" onclick="selectImage(this)">
+            <img src="https://timburton.mx/wp-content/uploads/2021/11/morelos.png" onclick="selectImage(this)">
+            <img src="https://cdn-3.expansion.mx/dims4/default/e164e49/2147483647/strip/true/crop/1920x1280+0+0/resize/1200x800!/format/webp/quality/60/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Fc7%2F29%2Fdff77ad0474b8b62c6ccc5040f1f%2F638023-ine-credencial-de-elector-3-web.jpg" onclick="selectImage(this)">
+            <img src="https://autodinamico.mx/wp-content/uploads/2023/01/pantalla-2023-01-31-a-la-s-14-54-48-1450x1080.webp" onclick="selectImage(this)">
+        </div>
+        <br>
+        <label for="values" placeholder="placa de carro, placa de moto, identificación">Escribe 1 o más términos separados por comas:</label>
+        <input type="text" id="values" name="values" ><br><br>
+        <input type="submit" value="Clasificar" class="submit">
+    </form>
+    <div id="results">
+      <h1>Esperando Datos</h1>
+    </div>
+    <footer>
+      <p> (©) ALLIENZ - 2023</p>
+    </footer>
+<script>
+    let selectedImageUrl = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const images = document.querySelectorAll(".image-grid img");
+        const firstImage = images[0];
+        firstImage.classList.add("selected");
+        selectedImageUrl = firstImage.src;
+    });
+
+    document.getElementById("image-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        document.getElementById("results").innerHTML = "<h1>...Analizando Campos Cuánticos Resonantes...</h1>";
+
+        const imageUrl = document.getElementById("image-url").value;
+        const imageFile = document.getElementById("image-file").files[0];
+        let values = document.getElementById("values").value;
+
+        if (!values.trim()) {
+            values = document.getElementById("values").placeholder;
+    }
+
+
+    document.getElementById("image-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        document.getElementById("results").innerHTML = "<h1>...Analizando Campos Cuánticos Resonantes...</h1>";
+
+        const imageUrl = document.getElementById("image-url").value;
+        const imageFile = document.getElementById("image-file").files[0];
+        let values = document.getElementById("values").value;
+
+        if (!values.trim()) {
+            values = document.getElementById("values").placeholder;
+        }
+
+        const formData = new FormData();
+        formData.append("values", values);
+
+        if (document.getElementById("url-option").checked) {
+            formData.append("image-url", imageUrl);
+        } else if (document.getElementById("file-option").checked) {
+            formData.append("image-file", imageFile);
+        } else if (document.getElementById("select-option").checked) {
+            formData.append("image-url", selectedImageUrl);
+        }
+
+        const response = await fetch("https://e6a79a81d316-5385089081761871452.ngrok-free.app/analyze", {
+            method: "POST",
+            body: formData
+        });
+
+        document.getElementById("results").innerHTML = "<h1>...Comunicación con la Mente Cósmica Establecida...</h1>";
+
+        setTimeout(async () => {
+            const results = await response.json();
+            const sortedResults = Object.entries(results)
+                .sort(([, a], [, b]) => b - a)
+                .map(([key, value]) => [key, (value * 100).toFixed(2) + '%']);
+
+            const mostProbable = sortedResults[0];
+
+            let resultHtml = `<h1>${mostProbable[0]}</h1>`;
+            resultHtml += "<ul>";
+            sortedResults.forEach(([key, value]) => {
+                resultHtml += `<li>${key}: ${value}</li>`;
+            });
+            resultHtml += "</ul>";
+
+            document.getElementById("results").innerHTML = resultHtml;
+        }, 2000);
+    });
+
+    function selectImage(imgElement) {
+        document.getElementById("select-option").checked = true;
+        const images = document.querySelectorAll(".image-grid img");
+        images.forEach(img => img.classList.remove("selected"));
+        imgElement.classList.add("selected");
+        selectedImageUrl = imgElement.src;
+    }
+</script>
+
+</body>
+</html>
