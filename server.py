@@ -1,6 +1,4 @@
-!pip install Flask pyngrok flask_cors torchvision ftfy regex tqdm
-!pip install git+https://github.com/openai/CLIP.git
-
+# Import Dependencies
 import torch
 import clip
 from PIL import Image
@@ -14,13 +12,17 @@ import os
 # Set the ngrok auth token
 conf.get_default().auth_token = "NGROK_AUTH_TOKEN"
 
+# Start APP
 app = Flask(__name__, static_folder='/content')
-CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes and origins
+
+# Enable CORS for all routes and origins
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Load the CLIP model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
 
+# Declare App Functions
 @app.route('/analyze', methods=['POST'])
 def analyze_image():
     values = request.form.get('values')
