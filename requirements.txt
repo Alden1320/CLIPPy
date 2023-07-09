@@ -1,9 +1,9 @@
-Flask
-pyngrok
-flask_cors
-torchvision
-ftfy
-regex
-tqdm
+Flask==2.2.5
+Flask-Cors==4.0.0
+ftfy==6.1.1
+pyngrok==6.0.0
+regex==2022.10.31
+tqdm==4.65.0
+torchvision==0.15.2
 git+https://github.com/openai/CLIP.git
 git+https://github.com/Alden1320/CLIPPy.git
