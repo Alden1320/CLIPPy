@@ -12,7 +12,7 @@ from io import BytesIO
 import os
 
 # Set the ngrok auth token
-conf.get_default().auth_token = "2RmjersP4fVZY1RxLU7wc59HgIM_2tmL6nnmEuYqeh1YK58Up"
+conf.get_default().auth_token = "NGROK_AUTH_TOKEN"
 
 app = Flask(__name__, static_folder='/content')
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes and origins
