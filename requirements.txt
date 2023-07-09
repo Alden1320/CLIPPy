@@ -1,0 +1,9 @@
+Flask
+pyngrok
+flask_cors
+torchvision
+ftfy
+regex
+tqdm
+git+https://github.com/openai/CLIP.git
+git+https://github.com/Alden1320/CLIPPy.git
