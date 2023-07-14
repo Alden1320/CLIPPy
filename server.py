@@ -4,13 +4,13 @@ import clip
 from PIL import Image
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from pyngrok import ngrok, conf
+# from pyngrok import ngrok, conf
 import requests
 from io import BytesIO
 import os
 
 # Set the ngrok auth token
-conf.get_default().auth_token = "2RmjersP4fVZY1RxLU7wc59HgIM_2tmL6nnmEuYqeh1YK58Up"
+# conf.get_default().auth_token = "2RmjersP4fVZY1RxLU7wc59HgIM_2tmL6nnmEuYqeh1YK58Up"
 
 # Start APP
 app = Flask(__name__, static_folder='/content')
@@ -23,6 +23,10 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
 
 # Declare App Functions
+@app.route('/')
+def serve_html():
+    return send_from_directory(app.static_folder, 'index.html')
+
 @app.route('/analyze', methods=['POST'])
 def analyze_image():
     values = request.form.get('values')
@@ -55,18 +59,6 @@ def analyze_image():
     results = {value: float(sim) for value, sim in zip(values_list, similarity[0])}
     return jsonify(results)
 
-@app.route('/')
-def serve_html():
-    return send_from_directory(app.static_folder, 'index.html')
-
-# Run the server with ngrok
+# Run the server 
 if __name__ == '__main__':
-    # Specify the hostname for the static URL
-    try:
-        public_url = ngrok.connect(5000, hostname="e6a79a81d316-5385089081761871452.ngrok-free.app")
-        print(f'Public URL: {public_url}')
-    except Exception as e:
-        print(f'Error: {e}')
-        public_url = ngrok.connect(5000)
-        print(f'Fallback to Public URL: {public_url}')
     app.run(port=5000)
