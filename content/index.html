@@ -171,7 +171,8 @@
 
         if (!values.trim()) {
             values = document.getElementById("values").placeholder;
-    }
+    	}
+    });
 
 
     document.getElementById("image-form").addEventListener("submit", async function(event) {
@@ -197,7 +198,7 @@
             formData.append("image-url", selectedImageUrl);
         }
 
-        const response = await fetch("https://e6a79a81d316-5385089081761871452.ngrok-free.app/analyze", {
+        const response = await fetch("https://alluxion.com/clippy/content/analyze", {
             method: "POST",
             body: formData
         });
