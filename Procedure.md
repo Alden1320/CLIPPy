@@ -54,6 +54,14 @@ Actualizamos todo desde el repositorio de paquetes de Ubuntu
 ```linux
     sudo apt upgrade -y
 ```
+
+###### **ACTUALIZACIÓN DE PYTHON**
+Actualizamos Python
+
+```linux
+    sudo apt install python3-full
+```
+
 ###### **INSTALACIÓN DE PAQUETES**
 **NGINX**
 Instalamos el servidor NGINX
