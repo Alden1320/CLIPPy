@@ -3,7 +3,7 @@
 
 ***GITHUB [CLIPPy](https://github.com/Alden1320/clippy)***
 
-CLIPPy es una web app que mediante un servidor Flask en Python sirve a un Frontend en HTML para realizar una CLASIFICACIÓN DE IMÁGENES contrastándolas contra uno o más términos. Para realizar la inferencia se utiliza el modelo de código abierto de OPENAI llamado [CLIP VIT](https://github.com/openai/CLIP)
+CLIPPy es una web app que mediante un servidor Flask en Python sirve a un Frontend en HTML para realizar una CLASIFICACIÓN DE IMÁGENES contrastándolas contra uno o más términos. Para realizar la inferencia se utiliza el modelo de código abierto de OPENAI llamado [CLIP VIT](https://github.com/openai/CLIP.git)
 
 ___
 ***CLIPPy*** *Developer* -   Alden Sathyananda Cecchetti Taboada
@@ -39,10 +39,8 @@ Utilizaremos un servidor VPS:
 9. [openai-clip](https://github.com/openai/CLIP.git)
 
 ___
-### **PROCESO**
-#### **INSTALACIÓN**
-##### **SERVIDOR**
-###### **ACTUALIZACIÓN DE SERVIDOR**
+### **INSTALACIÓN**
+#### **ACTUALIZACIÓN DE SERVIDOR**
 Empezamos por actualizar el repositorio de paquetes de Ubuntu
 
 ```linux
@@ -55,19 +53,123 @@ Actualizamos todo desde el repositorio de paquetes de Ubuntu
     sudo apt upgrade -y
 ```
 
-###### **ACTUALIZACIÓN DE PYTHON**
+#### **ACTUALIZACIÓN DE PYTHON**
 Actualizamos Python
 
 ```linux
     sudo apt install python3-full
 ```
 
-###### **INSTALACIÓN DE PAQUETES**
-**NGINX**
+#### **INSTALACIÓN DE NGINX**  
 Instalamos el servidor NGINX
 
-**ANACONDA**
+```linux
+    apt install nginx
+```
 
+[Creamos un bloque de servidor](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04) y asignamos permisos
+
+```linux
+    sudo mkdir -p /var/www/alluxion.com/html
+    sudo chown -R $USER:$USER /var/www/alluxion.com/html
+    sudo chmod -R 755 /var/www/alluxion.com
+```
+
+#### **INSTALACIÓN DE PIP**
+Instalamos el gestor de paquetes de Python, pip
+
+```linux
+    sudo apt install python3-pip
+```
+
+#### **INSTALACIÓN DE FLASK Y GUNICORN**
+Instalamos Flask y Gunicorn
+
+```linux
+    pip install wheel flask gunicorn
+```
+
+#### **CONFIGURACIÓN DE NGINX PARA SERVIR LA APLICACIÓN FLASK**
+Creamos un bloque de servidor para alluxion.com y creamos un enlace simbólico a sites-enabled
+
+```linux
+    sudo nano /etc/nginx/sites-available/alluxion.com
+```
+
+En este archivo, agregamos la siguiente configuración:
+
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /var/www/alluxion.com/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name alluxion.com www.alluxion.com;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location /clippy {
+        proxy_pass http://0.0.0.0:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;    
+    }
+}
+```
+
+Guardamos y cerramos el archivo, luego creamos el enlace simbólico:
+
+```linux
+    sudo ln -s /etc/nginx/sites-available/alluxion.com /etc/nginx/sites-enabled/
+```
+
+#### **CREACIÓN DE LA APLICACIÓN FLASK**
+Creamos un archivo hello.py en /var/www/alluxion.com/html/clippy con el siguiente contenido:
+
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
+```
+
+#### **CREACIÓN DEL ARCHIVO WSGI**
+Creamos un archivo wsgi.py en /var/www/alluxion.com/html/clippy con el siguiente contenido:
+
+```python
+from hello import app
+
+if __name__=="__main__":
+    app.run()
+```
+
+#### **INICIO DE LA APLICACIÓN FLASK CON GUNICORN**
+Iniciamos la aplicación Flask con Gunicorn
+
+```linux
+    cd /var/www/alluxion.com/html/clippy
+    gunicorn --bind 0.0.0.0:8000 wsgi:app
+```
+
+#### **REINICIO DE NGINX**
+Finalmente, reiniciamos Nginx para que los cambios surtan efecto
+
+```linux
+    sudo systemctl restart nginx
+```
+
+Ahora, la aplicación Flask "Hello World" debería ser visible en alluxion.com/clippy.
+
+
+#### **INSTALACIÓN DE ANACONDA**  
 Descargamos [Anaconda](https://www.anaconda.com/download)
 
 ```linux
