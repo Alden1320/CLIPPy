@@ -130,12 +130,12 @@ Guardamos y cerramos el archivo, luego creamos el enlace simbólico:
 Creamos un archivo hello.py en /var/www/alluxion.com/html/clippy con el siguiente contenido:
 
 ```python
-from flask import Flask
+from flask import Flask, send_from_directory
 app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return send_from_directory('/var/www/alluxion.com/html/clippy/content', 'index.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
@@ -166,8 +166,13 @@ Finalmente, reiniciamos Nginx para que los cambios surtan efecto
     sudo systemctl restart nginx
 ```
 
-Ahora, la aplicación Flask "Hello World" debería ser visible en alluxion.com/clippy.
+#### **CREACIÓN DE LA CARPETA DE CONTENIDO Y ARCHIVO INDEX.HTML**
+Creamos la carpeta de contenido y el archivo index.html en /var/www/alluxion.com/html/clippy/content
 
+```linux
+    mkdir -p /var/www/alluxion.com/html/clippy/content
+    echo "Hello World!" > /var/www/alluxion.com/html/clippy/content/index.html
+```
 
 #### **INSTALACIÓN DE ANACONDA**  
 Descargamos [Anaconda](https://www.anaconda.com/download)
@@ -194,3 +199,9 @@ Activamos el Entorno Clippy
     conda activate clippy
 ```
 
+#### **INSTALACIÓN DE PYTORCH**
+Instalamos Pytorch a través de ANACONDA
+
+```linux
+    conda install pytorch torchvision torchaudio cpuonly -c pytorch
+```
